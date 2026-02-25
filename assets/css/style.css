@@ -108,3 +108,26 @@ footer{padding:26px 0 34px; color:var(--muted); font-size:13px}
 .foot{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
 
 .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New"; font-size:12px; color:var(--muted)}
+/* Expandable project details */
+details.card.proj{padding:0}
+summary.proj-summary{
+  list-style:none;
+  cursor:pointer;
+  padding:16px;
+}
+summary.proj-summary::-webkit-details-marker{display:none}
+.proj-summary h3{margin:0 0 8px; font-size:16px}
+.proj-summary p{margin:0 0 12px; color:var(--muted); font-size:13px}
+.proj-body{border-top:1px solid var(--border); padding:16px}
+.proj-body h4{margin:0 0 8px; font-size:14px}
+.proj-body ul{margin:8px 0 0 18px; color:var(--muted)}
+.gallery{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+  margin-top:12px;
+}
+@media (max-width: 900px){.gallery{grid-template-columns: repeat(2, 1fr)}}
+@media (max-width: 620px){.gallery{grid-template-columns: 1fr}}
+.gallery img{
+  width:100%; height:auto; border-radius:14px;
+  border:1px solid var(--border);
+}
