@@ -131,3 +131,76 @@ summary.proj-summary::-webkit-details-marker{display:none}
   width:100%; height:auto; border-radius:14px;
   border:1px solid var(--border);
 }
+/* --- Rotating carousel (pure CSS) --- */
+.carousel {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+}
+
+.carousel .frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.carousel .frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  opacity: 0;
+  animation: rotateSlides 16s infinite;
+}
+
+.carousel .frame img:nth-child(1) { animation-delay: 0s; }
+.carousel .frame img:nth-child(2) { animation-delay: 4s; }
+.carousel .frame img:nth-child(3) { animation-delay: 8s; }
+.carousel .frame img:nth-child(4) { animation-delay: 12s; }
+
+@keyframes rotateSlides {
+  0%   { opacity: 0; }
+  6%   { opacity: 1; }
+  25%  { opacity: 1; }
+  31%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.carousel .cap {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* --- In-progress image badge --- */
+.inprogress {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+}
+.inprogress img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: saturate(0.85);
+}
+.inprogress .badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--border);
+  color: #fff;
+  letter-spacing: .02em;
+}
