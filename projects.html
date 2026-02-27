@@ -114,6 +114,105 @@
 .inprogress img {
   cursor: zoom-in;
 }
+    /* --- Lightbox --- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.80);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+.lightbox.open { display: flex; }
+
+.lightbox-inner {
+  max-width: min(1100px, 96vw);
+  max-height: 90vh;
+  width: 100%;
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+.lightbox-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.lightbox-title {
+  font-size: 13px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lightbox-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.lightbox-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.lightbox-btn:hover {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+}
+.lightbox-img-wrap {
+  background: rgba(0,0,0,.25);
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  position: relative;
+}
+.lightbox-img {
+  max-width: 100%;
+  max-height: 78vh;
+  height: auto;
+  width: auto;
+}
+
+/* On-image arrows */
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.45);
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+.lightbox-arrow:hover {
+  background: rgba(0,0,0,.60);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+}
+.lightbox-arrow.prev { left: 10px; }
+.lightbox-arrow.next { right: 10px; }
+
+/* Make images clickable */
+.carousel .frame img,
+.gallery img,
+.inprogress img {
+  cursor: zoom-in;
+}
   </style>
 </head>
 <body>
@@ -465,6 +564,132 @@
     lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
   })();
+    <!-- Lightbox (click any image to open; supports Prev/Next) -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox-inner" role="dialog" aria-modal="true">
+    <div class="lightbox-top">
+      <div class="lightbox-title" id="lightboxTitle">Image</div>
+      <div class="lightbox-controls">
+        <button class="lightbox-btn" id="lightboxPrev" type="button">Prev</button>
+        <button class="lightbox-btn" id="lightboxNext" type="button">Next</button>
+        <button class="lightbox-btn" id="lightboxClose" type="button">Close</button>
+      </div>
+    </div>
+
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-arrow prev" id="lightboxPrevArrow" type="button" aria-label="Previous">‹</button>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded view" />
+      <button class="lightbox-arrow next" id="lightboxNextArrow" type="button" aria-label="Next">›</button>
+    </div>
+  </div>
+</div>
+    <script>
+  (function () {
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const lbTitle = document.getElementById('lightboxTitle');
+
+    const btnClose = document.getElementById('lightboxClose');
+    const btnPrev = document.getElementById('lightboxPrev');
+    const btnNext = document.getElementById('lightboxNext');
+    const arrowPrev = document.getElementById('lightboxPrevArrow');
+    const arrowNext = document.getElementById('lightboxNextArrow');
+
+    let currentList = [];
+    let currentIndex = 0;
+
+    function getProjectImageList(clickedImg) {
+      // Limit navigation to images inside the same project card/details
+      const scope = clickedImg.closest('details.card.proj') || clickedImg.closest('.card.proj') || clickedImg.closest('.proj-body');
+      if (!scope) return [];
+
+      // Collect all images in that scope (carousel + gallery + inprogress)
+      const imgs = Array.from(scope.querySelectorAll('img'))
+        .filter(img => img.getAttribute('src') && !img.getAttribute('src').includes('.keep'));
+
+      // Return array of {src, alt}
+      return imgs.map(img => ({
+        src: img.getAttribute('src'),
+        alt: img.getAttribute('alt') || 'Image'
+      }));
+    }
+
+    function openLightbox(list, index) {
+      currentList = list;
+      currentIndex = index;
+
+      const item = currentList[currentIndex];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.alt;
+
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      // Hide prev/next if only 1 image
+      const showNav = currentList.length > 1;
+      btnPrev.style.display = showNav ? '' : 'none';
+      btnNext.style.display = showNav ? '' : 'none';
+      arrowPrev.style.display = showNav ? '' : 'none';
+      arrowNext.style.display = showNav ? '' : 'none';
+    }
+
+    function closeLightbox() {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+      currentList = [];
+      currentIndex = 0;
+    }
+
+    function showIndex(nextIndex) {
+      if (!currentList.length) return;
+      currentIndex = (nextIndex + currentList.length) % currentList.length;
+      const item = currentList[currentIndex];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.alt;
+    }
+
+    function prev() { showIndex(currentIndex - 1); }
+    function next() { showIndex(currentIndex + 1); }
+
+    // Click any image to open lightbox with scoped navigation
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img');
+      if (!img) return;
+
+      // Only trigger for images inside project grid
+      const inProjects = img.closest('.grid');
+      if (!inProjects) return;
+
+      const src = img.getAttribute('src');
+      if (!src || src.includes('.keep')) return;
+
+      const list = getProjectImageList(img);
+      const idx = Math.max(0, list.findIndex(i => i.src === src));
+      openLightbox(list, idx);
+    });
+
+    // Buttons/arrows
+    btnClose.addEventListener('click', closeLightbox);
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    arrowPrev.addEventListener('click', prev);
+    arrowNext.addEventListener('click', next);
+
+    // Close on backdrop click
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+  })();
+</script>
 </script>
 </body>
 </html>
