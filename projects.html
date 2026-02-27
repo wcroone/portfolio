@@ -510,61 +510,7 @@
   </main>
 
   <script src="./assets/js/main.js"></script>
-<!-- Lightbox (click any image to open) -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <div class="lightbox-inner" role="dialog" aria-modal="true">
-    <div class="lightbox-top">
-      <div class="lightbox-title" id="lightboxTitle">Image</div>
-      <button class="lightbox-close" id="lightboxClose" type="button">Close</button>
-    </div>
-    <div class="lightbox-img-wrap">
-      <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded view" />
-    </div>
-  </div>
-</div>
-  <script>
-  (function () {
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightboxImg');
-    const lbTitle = document.getElementById('lightboxTitle');
-    const lbClose = document.getElementById('lightboxClose');
-
-    function openLightbox(src, alt) {
-      lbImg.src = src;
-      lbTitle.textContent = alt || 'Image';
-      lb.classList.add('open');
-      lb.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-      lb.classList.remove('open');
-      lb.setAttribute('aria-hidden', 'true');
-      lbImg.src = '';
-      document.body.style.overflow = '';
-    }
-
-    // Open lightbox when any image is clicked (carousel, gallery, etc.)
-    document.addEventListener('click', (e) => {
-      const img = e.target.closest('img');
-      if (!img) return;
-
-      // Only trigger for images inside project sections
-      const inProject = img.closest('.proj-body') || img.closest('.proj') || img.closest('.grid');
-      if (!inProject) return;
-
-      // Ignore invisible helper images if any
-      if (!img.getAttribute('src') || img.getAttribute('src').includes('.keep')) return;
-
-      openLightbox(img.getAttribute('src'), img.getAttribute('alt'));
-    });
-
-    // Close on button, backdrop click, or Esc
-    lbClose.addEventListener('click', closeLightbox);
-    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-  })();
-    <!-- Lightbox (click any image to open; supports Prev/Next) -->
+<!-- Lightbox (click any image to open; supports Prev/Next) -->
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <div class="lightbox-inner" role="dialog" aria-modal="true">
     <div class="lightbox-top">
@@ -583,113 +529,113 @@
     </div>
   </div>
 </div>
-    <script>
-  (function () {
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightboxImg');
-    const lbTitle = document.getElementById('lightboxTitle');
 
-    const btnClose = document.getElementById('lightboxClose');
-    const btnPrev = document.getElementById('lightboxPrev');
-    const btnNext = document.getElementById('lightboxNext');
-    const arrowPrev = document.getElementById('lightboxPrevArrow');
-    const arrowNext = document.getElementById('lightboxNextArrow');
+<script>
+(function () {
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  const lbTitle = document.getElementById('lightboxTitle');
 
-    let currentList = [];
-    let currentIndex = 0;
+  const btnClose = document.getElementById('lightboxClose');
+  const btnPrev = document.getElementById('lightboxPrev');
+  const btnNext = document.getElementById('lightboxNext');
+  const arrowPrev = document.getElementById('lightboxPrevArrow');
+  const arrowNext = document.getElementById('lightboxNextArrow');
 
-    function getProjectImageList(clickedImg) {
-      // Limit navigation to images inside the same project card/details
-      const scope = clickedImg.closest('details.card.proj') || clickedImg.closest('.card.proj') || clickedImg.closest('.proj-body');
-      if (!scope) return [];
+  let currentList = [];
+  let currentIndex = 0;
 
-      // Collect all images in that scope (carousel + gallery + inprogress)
-      const imgs = Array.from(scope.querySelectorAll('img'))
-        .filter(img => img.getAttribute('src') && !img.getAttribute('src').includes('.keep'));
+  function getProjectImageList(clickedImg) {
+    const scope =
+      clickedImg.closest('details.card.proj') ||
+      clickedImg.closest('.card.proj') ||
+      clickedImg.closest('.proj-body');
 
-      // Return array of {src, alt}
-      return imgs.map(img => ({
+    if (!scope) return [];
+
+    return Array.from(scope.querySelectorAll('img'))
+      .map(img => ({
         src: img.getAttribute('src'),
         alt: img.getAttribute('alt') || 'Image'
-      }));
-    }
+      }))
+      .filter(i => i.src && !i.src.includes('.keep'));
+  }
 
-    function openLightbox(list, index) {
-      currentList = list;
-      currentIndex = index;
+  function openLightbox(list, index) {
+    currentList = list;
+    currentIndex = index;
 
-      const item = currentList[currentIndex];
-      lbImg.src = item.src;
-      lbTitle.textContent = item.alt;
+    const item = currentList[currentIndex];
+    lbImg.src = item.src;
+    lbTitle.textContent = item.alt;
 
-      lb.classList.add('open');
-      lb.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
 
-      // Hide prev/next if only 1 image
-      const showNav = currentList.length > 1;
-      btnPrev.style.display = showNav ? '' : 'none';
-      btnNext.style.display = showNav ? '' : 'none';
-      arrowPrev.style.display = showNav ? '' : 'none';
-      arrowNext.style.display = showNav ? '' : 'none';
-    }
+    const showNav = currentList.length > 1;
+    btnPrev.style.display = showNav ? '' : 'none';
+    btnNext.style.display = showNav ? '' : 'none';
+    arrowPrev.style.display = showNav ? '' : 'none';
+    arrowNext.style.display = showNav ? '' : 'none';
+  }
 
-    function closeLightbox() {
-      lb.classList.remove('open');
-      lb.setAttribute('aria-hidden', 'true');
-      lbImg.src = '';
-      document.body.style.overflow = '';
-      currentList = [];
-      currentIndex = 0;
-    }
+  function closeLightbox() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    lbImg.src = '';
+    document.body.style.overflow = '';
+    currentList = [];
+    currentIndex = 0;
+  }
 
-    function showIndex(nextIndex) {
-      if (!currentList.length) return;
-      currentIndex = (nextIndex + currentList.length) % currentList.length;
-      const item = currentList[currentIndex];
-      lbImg.src = item.src;
-      lbTitle.textContent = item.alt;
-    }
+  function showIndex(nextIndex) {
+    if (!currentList.length) return;
+    currentIndex = (nextIndex + currentList.length) % currentList.length;
+    const item = currentList[currentIndex];
+    lbImg.src = item.src;
+    lbTitle.textContent = item.alt;
+  }
 
-    function prev() { showIndex(currentIndex - 1); }
-    function next() { showIndex(currentIndex + 1); }
+  function prev() { showIndex(currentIndex - 1); }
+  function next() { showIndex(currentIndex + 1); }
 
-    // Click any image to open lightbox with scoped navigation
-    document.addEventListener('click', (e) => {
-      const img = e.target.closest('img');
-      if (!img) return;
+  // Click any image in Projects grid
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest('img');
+    if (!img) return;
 
-      // Only trigger for images inside project grid
-      const inProjects = img.closest('.grid');
-      if (!inProjects) return;
+    // only if image is inside the projects grid
+    if (!img.closest('.grid')) return;
 
-      const src = img.getAttribute('src');
-      if (!src || src.includes('.keep')) return;
+    const src = img.getAttribute('src');
+    if (!src || src.includes('.keep')) return;
 
-      const list = getProjectImageList(img);
-      const idx = Math.max(0, list.findIndex(i => i.src === src));
-      openLightbox(list, idx);
-    });
+    const list = getProjectImageList(img);
+    const idx = Math.max(0, list.findIndex(i => i.src === src));
+    openLightbox(list, idx);
+  });
 
-    // Buttons/arrows
-    btnClose.addEventListener('click', closeLightbox);
-    btnPrev.addEventListener('click', prev);
-    btnNext.addEventListener('click', next);
-    arrowPrev.addEventListener('click', prev);
-    arrowNext.addEventListener('click', next);
+  // Controls
+  btnClose.addEventListener('click', closeLightbox);
+  btnPrev.addEventListener('click', prev);
+  btnNext.addEventListener('click', next);
+  arrowPrev.addEventListener('click', prev);
+  arrowNext.addEventListener('click', next);
 
-    // Close on backdrop click
-    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+  // Close on backdrop click
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb) closeLightbox();
+  });
 
-    // Keyboard controls
-    document.addEventListener('keydown', (e) => {
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') prev();
-      if (e.key === 'ArrowRight') next();
-    });
-  })();
-</script>
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  });
+})();
 </script>
 </body>
 </html>
