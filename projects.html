@@ -286,6 +286,24 @@
     }
     .lightbox-arrow.prev { left: 10px; }
     .lightbox-arrow.next { right: 10px; }
+    /* Force a balanced 2-column layout */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:16px;
+  align-items:start;
+}
+@media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+
+/* Center the last card (GTI) across both columns */
+.grid > details.card.proj:last-child{
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(820px, 100%);
+}
+
+/* Optional: slightly tighten summary height so top row aligns better */
+.summary-wrap{min-height:112px;}
   </style>
 </head>
 
