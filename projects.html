@@ -8,16 +8,66 @@
   <link rel="stylesheet" href="./assets/css/style.css" />
 
   <style>
-    /* Expand/collapse */
-    details.card.proj{padding:0}
+    /* ---------- Layout: make cards visually balanced ---------- */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:16px;
+      align-items: start;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+
+    details.card.proj{
+      padding:0;
+      overflow:hidden;
+      min-height: 140px;
+    }
     details.card.proj summary{
       list-style:none;
       cursor:pointer;
-      padding:16px;
+      padding:16px 16px 14px;
       user-select:none;
     }
     details.card.proj summary::-webkit-details-marker{display:none;}
     details.card.proj summary:focus{outline:2px solid var(--accent); outline-offset:4px; border-radius:12px;}
+
+    /* Summary spacing so every box looks similar height */
+    details.card.proj summary h3{
+      margin:0 0 8px;
+      font-size:16px;
+      line-height:1.2;
+    }
+    details.card.proj summary p{
+      margin:0 0 10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    details.card.proj summary .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 0 0 10px;
+    }
+    details.card.proj summary .hint{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      opacity:.95;
+    }
+    /* Keep summary content from sprawling in grid view */
+    .summary-wrap{
+      display:flex;
+      flex-direction:column;
+      min-height: 118px;
+    }
+    .summary-bottom{
+      margin-top:auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
 
     .proj-body{
       border-top:1px solid var(--border);
@@ -27,19 +77,17 @@
     .proj-body h4{margin:0 0 8px; font-size:14px; color:var(--text);}
     .proj-body ul{margin:8px 0 0 18px;}
     .proj-body li{margin:6px 0;}
-    .hint{margin-top:10px; font-size:12px; color:var(--muted);}
 
-    /* Layout polish */
-    .grid{align-items:start}
+    /* Two-column media inside expanded body */
     .proj-body .two-col{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:12px;
-      margin-top:8px;
+      margin-top:10px;
     }
     @media (max-width: 900px){ .proj-body .two-col{grid-template-columns:1fr;} }
 
-    /* Rotating carousels */
+    /* ---------- Carousels ---------- */
     .carousel{
       position: relative;
       border: 1px solid var(--border);
@@ -67,7 +115,6 @@
     .carousel .frame img:nth-child(2){animation-delay:4s;}
     .carousel .frame img:nth-child(3){animation-delay:8s;}
     .carousel .frame img:nth-child(4){animation-delay:12s;}
-
     @keyframes rotateSlides{
       0%{opacity:0}
       6%{opacity:1}
@@ -75,7 +122,6 @@
       31%{opacity:0}
       100%{opacity:0}
     }
-
     .carousel .cap{
       padding: 10px 12px;
       font-size: 12px;
@@ -88,7 +134,7 @@
     }
     .cap b{color:var(--text); font-weight:600}
 
-    /* In-progress badge */
+    /* ---------- In-progress badge ---------- */
     .inprogress{
       position: relative;
       border: 1px solid var(--border);
@@ -116,14 +162,11 @@
       letter-spacing:.02em;
     }
 
-    /* GTI: single rotator + captions per slide */
-    .caption-rotator .frame img{
-      animation: rotateSlidesGti 12s infinite;
-    }
+    /* ---------- GTI: single rotator + captions ---------- */
+    .caption-rotator .frame img{ animation: rotateSlidesGti 12s infinite; }
     .caption-rotator .frame img:nth-child(1){animation-delay:0s;}
     .caption-rotator .frame img:nth-child(2){animation-delay:4s;}
     .caption-rotator .frame img:nth-child(3){animation-delay:8s;}
-
     @keyframes rotateSlidesGti{
       0%{opacity:0}
       8%{opacity:1}
@@ -131,7 +174,6 @@
       36%{opacity:0}
       100%{opacity:0}
     }
-
     .caption-strip{
       padding: 10px 12px;
       border-top: 1px solid var(--border);
@@ -150,7 +192,6 @@
     .caption-strip span:nth-child(1){animation-delay:0s;}
     .caption-strip span:nth-child(2){animation-delay:4s;}
     .caption-strip span:nth-child(3){animation-delay:8s;}
-
     @keyframes rotateCaptions{
       0%{opacity:0}
       8%{opacity:1}
@@ -159,7 +200,7 @@
       100%{opacity:0}
     }
 
-    /* Lightbox w/ prev/next */
+    /* ---------- Lightbox ---------- */
     .lightbox {
       position: fixed;
       inset: 0;
@@ -245,10 +286,6 @@
     }
     .lightbox-arrow.prev { left: 10px; }
     .lightbox-arrow.next { right: 10px; }
-
-    /* Make images clickable */
-    .carousel .frame img,
-    .inprogress img { cursor: zoom-in; }
   </style>
 </head>
 
@@ -282,15 +319,19 @@
       <!-- 1) HALF SHAFTS -->
       <details class="card proj" id="halfshafts">
         <summary>
-          <h3>FSAE Halfshaft Design (Final Selected)</h3>
-          <p><b>Result:</b> Designed halfshafts selected for final design; achieved ~1 inch additional chassis clearance.</p>
-          <div class="tags">
-            <span class="tag">SolidWorks</span>
-            <span class="tag">Packaging</span>
-            <span class="tag">Interfaces</span>
-            <span class="tag">Durability</span>
+          <div class="summary-wrap">
+            <h3>FSAE Halfshaft Design (Final Selected)</h3>
+            <p><b>Result:</b> Designed halfshafts selected for final design; achieved ~1 inch additional chassis clearance.</p>
+            <div class="tags">
+              <span class="tag">SolidWorks</span>
+              <span class="tag">Packaging</span>
+              <span class="tag">Interfaces</span>
+              <span class="tag">Durability</span>
+            </div>
+            <div class="summary-bottom">
+              <span class="hint">Click to expand</span>
+            </div>
           </div>
-          <div class="hint">Click to expand</div>
         </summary>
 
         <div class="proj-body">
@@ -355,15 +396,19 @@
       <!-- 2) CHAIN TENSIONING -->
       <details class="card proj" id="tensioning">
         <summary>
-          <h3>Chain Tensioning Trade Study (Shim vs Roller vs Eccentric)</h3>
-          <p><b>Result:</b> Researched alternatives; now revisiting eccentric system using new dyno torque figures.</p>
-          <div class="tags">
-            <span class="tag">Trade study</span>
-            <span class="tag">Requirements</span>
-            <span class="tag">Iteration</span>
-            <span class="tag">Risk</span>
+          <div class="summary-wrap">
+            <h3>Chain Tensioning Trade Study</h3>
+            <p><b>Result:</b> Researched alternatives; revisiting eccentric system using new dyno torque figures.</p>
+            <div class="tags">
+              <span class="tag">Trade study</span>
+              <span class="tag">Requirements</span>
+              <span class="tag">Iteration</span>
+              <span class="tag">Risk</span>
+            </div>
+            <div class="summary-bottom">
+              <span class="hint">Click to expand</span>
+            </div>
           </div>
-          <div class="hint">Click to expand</div>
         </summary>
 
         <div class="proj-body">
@@ -393,15 +438,19 @@
       <!-- 3) TOE LINK / COMPLIANCE -->
       <details class="card proj" id="toelink">
         <summary>
-          <h3>Toe Link Mount Load-Path Review (Compliance Improvement)</h3>
-          <p><b>Result:</b> Supported redesign decision for improved loading scenario and reduced unwanted compliance.</p>
-          <div class="tags">
-            <span class="tag">Suspension</span>
-            <span class="tag">Load paths</span>
-            <span class="tag">Compliance</span>
-            <span class="tag">Design reviews</span>
+          <div class="summary-wrap">
+            <h3>Toe Link Mount Load-Path Review</h3>
+            <p><b>Result:</b> Supported redesign decision for improved loading scenario and reduced unwanted compliance.</p>
+            <div class="tags">
+              <span class="tag">Suspension</span>
+              <span class="tag">Load paths</span>
+              <span class="tag">Compliance</span>
+              <span class="tag">Design reviews</span>
+            </div>
+            <div class="summary-bottom">
+              <span class="hint">Click to expand</span>
+            </div>
           </div>
-          <div class="hint">Click to expand</div>
         </summary>
 
         <div class="proj-body">
@@ -423,18 +472,22 @@
         </div>
       </details>
 
-      <!-- 4) GTI BUILD (single rotator with captions) -->
+      <!-- 4) GTI BUILD -->
       <details class="card proj" id="gti">
         <summary>
-          <h3>Volkswagen GTI Restoration + Performance Build</h3>
-          <p><b>Result:</b> Reduced costs ~45% by refurbishing used parts and rebuilding junkyard engines; validated through road testing.</p>
-          <div class="tags">
-            <span class="tag">Powertrain</span>
-            <span class="tag">Diagnostics</span>
-            <span class="tag">Validation</span>
-            <span class="tag">Cost</span>
+          <div class="summary-wrap">
+            <h3>Volkswagen GTI Restoration + Performance Build</h3>
+            <p><b>Result:</b> Reduced costs ~45% via refurbishment + rebuild strategy; validated through road testing.</p>
+            <div class="tags">
+              <span class="tag">Powertrain</span>
+              <span class="tag">Diagnostics</span>
+              <span class="tag">Validation</span>
+              <span class="tag">Cost</span>
+            </div>
+            <div class="summary-bottom">
+              <span class="hint">Click to expand</span>
+            </div>
           </div>
-          <div class="hint">Click to expand</div>
         </summary>
 
         <div class="proj-body">
@@ -516,10 +569,7 @@
       if (!scope) return [];
 
       return Array.from(scope.querySelectorAll('img'))
-        .map(img => ({
-          src: img.getAttribute('src'),
-          alt: img.getAttribute('alt') || 'Image'
-        }))
+        .map(img => ({ src: img.getAttribute('src'), alt: img.getAttribute('alt') || 'Image' }))
         .filter(i => i.src && !i.src.includes('.keep'));
     }
 
@@ -581,9 +631,7 @@
     arrowPrev.addEventListener('click', prev);
     arrowNext.addEventListener('click', next);
 
-    lb.addEventListener('click', (e) => {
-      if (e.target === lb) closeLightbox();
-    });
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
 
     document.addEventListener('keydown', (e) => {
       if (!lb.classList.contains('open')) return;
