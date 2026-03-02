@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Projects | William Rooney</title>
 
-  <!-- Your main stylesheet (keep this) -->
   <link rel="stylesheet" href="./assets/css/style.css" />
 
-  <!-- Local fallback styles for expand/collapse (guaranteed to work) -->
   <style>
+    /* Expand/collapse */
     details.card.proj{padding:0}
     details.card.proj summary{
       list-style:none;
@@ -28,196 +27,232 @@
     .proj-body h4{margin:0 0 8px; font-size:14px; color:var(--text);}
     .proj-body ul{margin:8px 0 0 18px;}
     .proj-body li{margin:6px 0;}
-    .proj-body .mono{color:var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New"; font-size:12px;}
+    .hint{margin-top:10px; font-size:12px; color:var(--muted);}
 
-    .gallery{
+    /* Layout polish */
+    .grid{align-items:start}
+    .proj-body .two-col{
       display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-      margin-top:10px;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:8px;
     }
-    @media (max-width: 900px){ .gallery{grid-template-columns: repeat(2, 1fr);} }
-    @media (max-width: 620px){ .gallery{grid-template-columns: 1fr;} }
-    .gallery img{
-      width:100%;
-      height:auto;
-      border-radius:14px;
-      border:1px solid var(--border);
+    @media (max-width: 900px){ .proj-body .two-col{grid-template-columns:1fr;} }
+
+    /* Rotating carousels */
+    .carousel{
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
       background: color-mix(in oklab, var(--card) 70%, transparent);
     }
-    .hint{margin-top:10px; font-size:12px; color:var(--muted);}
-    .spacer{height:10px;}
-    /* --- Lightbox --- */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.80);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  z-index: 9999;
-}
-.lightbox.open { display: flex; }
+    .carousel .frame{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+    }
+    .carousel .frame img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+      opacity:0;
+      animation: rotateSlides 16s infinite;
+      cursor: zoom-in;
+    }
+    .carousel .frame img:nth-child(1){animation-delay:0s;}
+    .carousel .frame img:nth-child(2){animation-delay:4s;}
+    .carousel .frame img:nth-child(3){animation-delay:8s;}
+    .carousel .frame img:nth-child(4){animation-delay:12s;}
 
-.lightbox-inner {
-  max-width: min(1100px, 96vw);
-  max-height: 90vh;
-  width: 100%;
-  background: color-mix(in oklab, var(--card) 92%, transparent);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.lightbox-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.lightbox-title {
-  font-size: 13px;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.lightbox-close {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 999px;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-.lightbox-close:hover { border-color: color-mix(in oklab, var(--accent) 40%, var(--border)); }
+    @keyframes rotateSlides{
+      0%{opacity:0}
+      6%{opacity:1}
+      25%{opacity:1}
+      31%{opacity:0}
+      100%{opacity:0}
+    }
 
-.lightbox-img-wrap {
-  background: rgba(0,0,0,.25);
-  display: grid;
-  place-items: center;
-  padding: 10px;
-}
-.lightbox-img {
-  max-width: 100%;
-  max-height: 78vh;
-  height: auto;
-  width: auto;
-}
+    .carousel .cap{
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .cap b{color:var(--text); font-weight:600}
 
-/* Make all gallery/carousel images obviously clickable */
-.carousel .frame img,
-.gallery img,
-.inprogress img {
-  cursor: zoom-in;
-}
-    /* --- Lightbox --- */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.80);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  z-index: 9999;
-}
-.lightbox.open { display: flex; }
+    /* In-progress badge */
+    .inprogress{
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: color-mix(in oklab, var(--card) 70%, transparent);
+    }
+    .inprogress img{
+      width:100%;
+      height:auto;
+      display:block;
+      cursor: zoom-in;
+    }
+    .inprogress .badge{
+      position:absolute;
+      top:10px;
+      left:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid var(--border);
+      color:#fff;
+      letter-spacing:.02em;
+    }
 
-.lightbox-inner {
-  max-width: min(1100px, 96vw);
-  max-height: 90vh;
-  width: 100%;
-  background: color-mix(in oklab, var(--card) 92%, transparent);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  position: relative;
-}
-.lightbox-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.lightbox-title {
-  font-size: 13px;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.lightbox-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.lightbox-btn {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 999px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: 13px;
-}
-.lightbox-btn:hover {
-  border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
-}
-.lightbox-img-wrap {
-  background: rgba(0,0,0,.25);
-  display: grid;
-  place-items: center;
-  padding: 10px;
-  position: relative;
-}
-.lightbox-img {
-  max-width: 100%;
-  max-height: 78vh;
-  height: auto;
-  width: auto;
-}
+    /* GTI: single rotator + captions per slide */
+    .caption-rotator .frame img{
+      animation: rotateSlidesGti 12s infinite;
+    }
+    .caption-rotator .frame img:nth-child(1){animation-delay:0s;}
+    .caption-rotator .frame img:nth-child(2){animation-delay:4s;}
+    .caption-rotator .frame img:nth-child(3){animation-delay:8s;}
 
-/* On-image arrows */
-.lightbox-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,.45);
-  color: #fff;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-}
-.lightbox-arrow:hover {
-  background: rgba(0,0,0,.60);
-  border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
-}
-.lightbox-arrow.prev { left: 10px; }
-.lightbox-arrow.next { right: 10px; }
+    @keyframes rotateSlidesGti{
+      0%{opacity:0}
+      8%{opacity:1}
+      30%{opacity:1}
+      36%{opacity:0}
+      100%{opacity:0}
+    }
 
-/* Make images clickable */
-.carousel .frame img,
-.gallery img,
-.inprogress img {
-  cursor: zoom-in;
-}
+    .caption-strip{
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      position: relative;
+      min-height: 18px;
+      overflow:hidden;
+    }
+    .caption-strip span{
+      position:absolute;
+      left:12px; right:12px;
+      opacity:0;
+      animation: rotateCaptions 12s infinite;
+    }
+    .caption-strip span:nth-child(1){animation-delay:0s;}
+    .caption-strip span:nth-child(2){animation-delay:4s;}
+    .caption-strip span:nth-child(3){animation-delay:8s;}
+
+    @keyframes rotateCaptions{
+      0%{opacity:0}
+      8%{opacity:1}
+      30%{opacity:1}
+      36%{opacity:0}
+      100%{opacity:0}
+    }
+
+    /* Lightbox w/ prev/next */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.80);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+    .lightbox.open { display: flex; }
+
+    .lightbox-inner {
+      max-width: min(1100px, 96vw);
+      max-height: 90vh;
+      width: 100%;
+      background: color-mix(in oklab, var(--card) 92%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .lightbox-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lightbox-title {
+      font-size: 13px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .lightbox-controls { display:flex; gap:8px; align-items:center; }
+    .lightbox-btn {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .lightbox-btn:hover {
+      border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+    }
+    .lightbox-img-wrap {
+      background: rgba(0,0,0,.25);
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      position: relative;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      height: auto;
+      width: auto;
+    }
+    .lightbox-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+    .lightbox-arrow:hover {
+      background: rgba(0,0,0,.60);
+      border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+    }
+    .lightbox-arrow.prev { left: 10px; }
+    .lightbox-arrow.next { right: 10px; }
+
+    /* Make images clickable */
+    .carousel .frame img,
+    .inprogress img { cursor: zoom-in; }
   </style>
 </head>
-<body>
 
-  <!-- NAV (matches your other pages) -->
+<body>
   <div class="nav">
     <div class="nav-inner">
       <div class="brand"><span class="dot"></span> William Rooney</div>
@@ -238,79 +273,84 @@
     <div class="section-title">
       <div>
         <h2>Projects</h2>
-        <p>Click each project to expand: goal → inputs → work → result → what to show.</p>
+        <p>Click each project to expand: goal → inputs → work → result.</p>
       </div>
     </div>
 
     <div class="grid">
 
       <!-- 1) HALF SHAFTS -->
-<details class="card proj" id="halfshafts">
-  <summary>
-    <h3>FSAE Halfshaft Design (Final Selected)</h3>
-    <p><b>Result:</b> Designed halfshafts selected for final design; achieved ~1 inch additional chassis clearance.</p>
-    <div class="tags">
-      <span class="tag">SolidWorks</span>
-      <span class="tag">Packaging</span>
-      <span class="tag">Interfaces</span>
-      <span class="tag">Durability</span>
-    </div>
-    <div class="hint">Click to expand</div>
-  </summary>
+      <details class="card proj" id="halfshafts">
+        <summary>
+          <h3>FSAE Halfshaft Design (Final Selected)</h3>
+          <p><b>Result:</b> Designed halfshafts selected for final design; achieved ~1 inch additional chassis clearance.</p>
+          <div class="tags">
+            <span class="tag">SolidWorks</span>
+            <span class="tag">Packaging</span>
+            <span class="tag">Interfaces</span>
+            <span class="tag">Durability</span>
+          </div>
+          <div class="hint">Click to expand</div>
+        </summary>
 
-  <div class="proj-body">
-    <h4>Goal</h4>
-    <ul>
-      <li>Design/select halfshafts that satisfy packaging, interface, and durability requirements for competition use.</li>
-    </ul>
+        <div class="proj-body">
+          <h4>Goal</h4>
+          <ul>
+            <li>Design/select halfshafts that satisfy packaging, interface, and durability requirements for competition use.</li>
+          </ul>
 
-    <h4>Inputs / Constraints</h4>
-    <ul>
-      <li>Upright + differential interfaces, chassis packaging constraints, serviceability and assembly access.</li>
-      <li>Clearance targets and motion envelope checks.</li>
-    </ul>
+          <h4>Inputs / Constraints</h4>
+          <ul>
+            <li>Upright + differential interfaces, chassis packaging constraints, serviceability and assembly access.</li>
+            <li>Clearance targets and motion envelope checks.</li>
+          </ul>
 
-    <h4>Work Performed</h4>
-    <ul>
-      <li>Parametric CAD iteration in SolidWorks; interface and clearance checks.</li>
-      <li>Cross-team communication to align drivetrain constraints with <b>both chassis and suspension decisions</b> (packaging, mounting, load-path implications).</li>
-    </ul>
+          <h4>Work Performed</h4>
+          <ul>
+            <li>Parametric CAD iteration in SolidWorks; interface and clearance checks.</li>
+            <li>Cross-team communication to align drivetrain constraints with <b>both chassis and suspension decisions</b> (packaging, mounting, load-path implications).</li>
+          </ul>
 
-    <h4>Outcome</h4>
-    <ul>
-      <li>Final halfshaft concept selected; gained ~1 inch additional clearance to chassis.</li>
-    </ul>
+          <h4>Outcome</h4>
+          <ul>
+            <li>Final halfshaft concept selected; gained ~1 inch additional clearance to chassis.</li>
+          </ul>
 
-    <h4 style="margin-top:14px;">Initial Clearances (Rotating)</h4>
-    <div class="carousel">
-      <div class="frame">
-        <img src="./assets/img/initial_halfshaft_clearance_1.png" alt="Initial halfshaft clearance 1" />
-        <img src="./assets/img/initial_halfshaft_clearance_2.png" alt="Initial halfshaft clearance 2" />
-        <img src="./assets/img/initial_halfshaft_clearance_3.png" alt="Initial halfshaft clearance 3" />
-        <img src="./assets/img/initial_halfshaft_clearance_4.png" alt="Initial halfshaft clearance 4" />
-      </div>
-      <div class="cap">Initial packaging clearance snapshots</div>
-    </div>
+          <div class="two-col">
+            <div>
+              <h4 style="margin-top:14px;">Initial Clearances (Rotating)</h4>
+              <div class="carousel">
+                <div class="frame">
+                  <img src="./assets/img/initial_halfshaft_clearance_1.png" alt="Initial clearance 1" />
+                  <img src="./assets/img/initial_halfshaft_clearance_2.png" alt="Initial clearance 2" />
+                  <img src="./assets/img/initial_halfshaft_clearance_3.png" alt="Initial clearance 3" />
+                  <img src="./assets/img/initial_halfshaft_clearance_4.png" alt="Initial clearance 4" />
+                </div>
+                <div class="cap"><b>Initial</b><span>Packaging clearance snapshots</span></div>
+              </div>
+            </div>
 
-    <h4 style="margin-top:14px;">Final Clearances (Rotating)</h4>
-    <div class="carousel">
-      <div class="frame">
-        <img src="./assets/img/final_halfshaft_clearance_1.png" alt="Final halfshaft clearance 1" />
-        <img src="./assets/img/final_halfshaft_clearance_2.png" alt="Final halfshaft clearance 2" />
-        <img src="./assets/img/final_halfshaft_clearance_3.png" alt="Final halfshaft clearance 3" />
-        <img src="./assets/img/final_halfshaft_clearance_4.png" alt="Final halfshaft clearance 4" />
-      </div>
-      <div class="cap">Final packaging clearance snapshots</div>
-    </div>
+            <div>
+              <h4 style="margin-top:14px;">Final Clearances (Rotating)</h4>
+              <div class="carousel">
+                <div class="frame">
+                  <img src="./assets/img/final_halfshaft_clearance_1.png" alt="Final clearance 1" />
+                  <img src="./assets/img/final_halfshaft_clearance_2.png" alt="Final clearance 2" />
+                  <img src="./assets/img/final_halfshaft_clearance_3.png" alt="Final clearance 3" />
+                  <img src="./assets/img/final_halfshaft_clearance_4.png" alt="Final clearance 4" />
+                </div>
+                <div class="cap"><b>Final</b><span>Packaging clearance snapshots</span></div>
+              </div>
+            </div>
+          </div>
 
-    <h4 style="margin-top:14px;">Halfshafts on Car</h4>
-    <div class="inprogress">
-      <div class="badge">IN PROGRESS</div>
-      <img src="./assets/img/halfshafts_on_car_in_progress.png" alt="Halfshafts on car (in progress)" />
-    </div>
-
-  </div>
-</details>
+          <h4 style="margin-top:14px;">Halfshafts on Car</h4>
+          <div class="inprogress">
+            <div class="badge">IN PROGRESS</div>
+            <img src="./assets/img/halfshafts_on_car_in_progress.png" alt="Halfshafts on car (in progress)" />
+          </div>
+        </div>
+      </details>
 
       <!-- 2) CHAIN TENSIONING -->
       <details class="card proj" id="tensioning">
@@ -347,13 +387,6 @@
           <ul>
             <li>Initial decision favored retaining shim system; current work aims to tighten requirements and enable potential bearing downsizing.</li>
           </ul>
-
-          <h4>Gallery (optional)</h4>
-          <div class="gallery">
-            <img src="./assets/img/tensioner_concept.png" alt="Tensioner concept sketch (replace)" />
-            <img src="./assets/img/tensioner_trade_table.png" alt="Trade study table (replace)" />
-            <img src="./assets/img/tensioner_packaging.png" alt="Packaging view (replace)" />
-          </div>
         </div>
       </details>
 
@@ -387,17 +420,10 @@
           <ul>
             <li>Aided decision-making for redesign of toe link mounts to uprights to improve loading scenario and compliance behavior.</li>
           </ul>
-
-          <h4>Gallery (optional)</h4>
-          <div class="gallery">
-            <img src="./assets/img/toelink_before.png" alt="Before load path (replace)" />
-            <img src="./assets/img/toelink_after.png" alt="After load path (replace)" />
-            <img src="./assets/img/toelink_mount.png" alt="Mount detail (replace)" />
-          </div>
         </div>
       </details>
 
-      <!-- 4) GTI BUILD -->
+      <!-- 4) GTI BUILD (single rotator with captions) -->
       <details class="card proj" id="gti">
         <summary>
           <h3>Volkswagen GTI Restoration + Performance Build</h3>
@@ -412,89 +438,24 @@
         </summary>
 
         <div class="proj-body">
-          <h4>Goal</h4>
+          <h4>Summary</h4>
           <ul>
-            <li>Restore and improve vehicle performance while balancing cost, reliability, and usability.</li>
+            <li>Restored and improved vehicle performance while balancing cost, reliability, and usability.</li>
+            <li>Validated repairs through functional checks and road testing.</li>
           </ul>
 
-          <h4>Work Performed</h4>
-          <ul>
-            <li>Diagnosed and repaired electrical, powertrain, and suspension issues.</li>
-            <li>Refurbished components and rebuilt junkyard engines when feasible to reduce costs.</li>
-            <li>Validated fixes through functional checks and road testing.</li>
-          </ul>
-
-          <h4>Outcome</h4>
-          <ul>
-            <li>~45% cost reduction versus all-new parts approach while maintaining functionality.</li>
-          </ul>
-
-          <h4>Gallery (optional)</h4>
-          <div class="gallery">
-            <img src="./assets/img/gti_before.jpg" alt="Before (replace)" />
-            <img src="./assets/img/gti_engine.jpg" alt="Engine rebuild (replace)" />
-            <img src="./assets/img/gti_after.jpg" alt="After (replace)" />
-          </div>
-        </div>
-      </details>
-
-      <!-- 5) SIMULATION / PROGRAMMING TOOLKIT -->
-      <details class="card proj" id="toolkit">
-        <summary>
-          <h3>Simulation + Programming Toolkit</h3>
-          <p>ANSYS Mechanical (static structural) + MATLAB + Excel for quick analysis, data review, and decision support.</p>
-          <div class="tags">
-            <span class="tag">ANSYS</span>
-            <span class="tag">MATLAB</span>
-            <span class="tag">Excel</span>
-            <span class="tag">Verification</span>
-          </div>
-          <div class="hint">Click to expand</div>
-        </summary>
-
-        <div class="proj-body">
-          <h4>How I Use These Tools</h4>
-          <ul>
-            <li><b>ANSYS:</b> sanity-check loads/stiffness and compare design options.</li>
-            <li><b>MATLAB:</b> quick calculations and basic data handling to support engineering decisions.</li>
-            <li><b>Excel:</b> requirements tracking, trade studies, and organizing test results.</li>
-          </ul>
-
-          <h4>Gallery (optional)</h4>
-          <div class="gallery">
-            <img src="./assets/img/fea_plot.png" alt="FEA plot (replace)" />
-            <img src="./assets/img/excel_tracker.png" alt="Excel tracker (replace)" />
-            <img src="./assets/img/matlab_script.png" alt="MATLAB script (replace)" />
-          </div>
-        </div>
-      </details>
-
-      <!-- 6) MANUFACTURING / QC MINDSET -->
-      <details class="card proj" id="dfm">
-        <summary>
-          <h3>Design-for-Manufacture + Quality Mindset</h3>
-          <p>Design intent → build realities: tolerances, fasteners, assembly, rework prevention, inspection readiness.</p>
-          <div class="tags">
-            <span class="tag">DFM</span>
-            <span class="tag">QC</span>
-            <span class="tag">Documentation</span>
-          </div>
-          <div class="hint">Click to expand</div>
-        </summary>
-
-        <div class="proj-body">
-          <h4>What I Focus On</h4>
-          <ul>
-            <li>Clear interfaces and constraint control (datums, reference strategy).</li>
-            <li>Design decisions that reduce rework (tool access, assembly sequence, tolerance clarity).</li>
-            <li>Inspection-ready thinking (CTQ features, measurement approach, revision discipline).</li>
-          </ul>
-
-          <h4>Gallery (optional)</h4>
-          <div class="gallery">
-            <img src="./assets/img/drawing_snip.png" alt="Redacted drawing snippet (replace)" />
-            <img src="./assets/img/build_photo.jpg" alt="Build photo (replace)" />
-            <img src="./assets/img/inspection_checklist.png" alt="Inspection checklist (replace)" />
+          <h4 style="margin-top:14px;">Build Photos (Rotating)</h4>
+          <div class="carousel caption-rotator">
+            <div class="frame">
+              <img src="./assets/img/gti_before.jpg" alt="GTI — Before (project start state)" />
+              <img src="./assets/img/gti_engine.jpg" alt="GTI — Engine rebuild / refurbishment work" />
+              <img src="./assets/img/gti_after.jpg" alt="GTI — After (current state)" />
+            </div>
+            <div class="caption-strip">
+              <span><b>Before:</b> project start state</span>
+              <span><b>Engine work:</b> rebuild/refurbishment phase</span>
+              <span><b>After:</b> current state after repairs</span>
+            </div>
           </div>
         </div>
       </details>
@@ -510,132 +471,127 @@
   </main>
 
   <script src="./assets/js/main.js"></script>
-<!-- Lightbox (click any image to open; supports Prev/Next) -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <div class="lightbox-inner" role="dialog" aria-modal="true">
-    <div class="lightbox-top">
-      <div class="lightbox-title" id="lightboxTitle">Image</div>
-      <div class="lightbox-controls">
-        <button class="lightbox-btn" id="lightboxPrev" type="button">Prev</button>
-        <button class="lightbox-btn" id="lightboxNext" type="button">Next</button>
-        <button class="lightbox-btn" id="lightboxClose" type="button">Close</button>
+
+  <!-- Lightbox (Prev/Next) -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-inner" role="dialog" aria-modal="true">
+      <div class="lightbox-top">
+        <div class="lightbox-title" id="lightboxTitle">Image</div>
+        <div class="lightbox-controls">
+          <button class="lightbox-btn" id="lightboxPrev" type="button">Prev</button>
+          <button class="lightbox-btn" id="lightboxNext" type="button">Next</button>
+          <button class="lightbox-btn" id="lightboxClose" type="button">Close</button>
+        </div>
+      </div>
+
+      <div class="lightbox-img-wrap">
+        <button class="lightbox-arrow prev" id="lightboxPrevArrow" type="button" aria-label="Previous">‹</button>
+        <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded view" />
+        <button class="lightbox-arrow next" id="lightboxNextArrow" type="button" aria-label="Next">›</button>
       </div>
     </div>
-
-    <div class="lightbox-img-wrap">
-      <button class="lightbox-arrow prev" id="lightboxPrevArrow" type="button" aria-label="Previous">‹</button>
-      <img class="lightbox-img" id="lightboxImg" src="" alt="Expanded view" />
-      <button class="lightbox-arrow next" id="lightboxNextArrow" type="button" aria-label="Next">›</button>
-    </div>
   </div>
-</div>
 
-<script>
-(function () {
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lightboxImg');
-  const lbTitle = document.getElementById('lightboxTitle');
+  <script>
+  (function () {
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const lbTitle = document.getElementById('lightboxTitle');
 
-  const btnClose = document.getElementById('lightboxClose');
-  const btnPrev = document.getElementById('lightboxPrev');
-  const btnNext = document.getElementById('lightboxNext');
-  const arrowPrev = document.getElementById('lightboxPrevArrow');
-  const arrowNext = document.getElementById('lightboxNextArrow');
+    const btnClose = document.getElementById('lightboxClose');
+    const btnPrev = document.getElementById('lightboxPrev');
+    const btnNext = document.getElementById('lightboxNext');
+    const arrowPrev = document.getElementById('lightboxPrevArrow');
+    const arrowNext = document.getElementById('lightboxNextArrow');
 
-  let currentList = [];
-  let currentIndex = 0;
+    let currentList = [];
+    let currentIndex = 0;
 
-  function getProjectImageList(clickedImg) {
-    const scope =
-      clickedImg.closest('details.card.proj') ||
-      clickedImg.closest('.card.proj') ||
-      clickedImg.closest('.proj-body');
+    function getProjectImageList(clickedImg) {
+      const scope =
+        clickedImg.closest('details.card.proj') ||
+        clickedImg.closest('.card.proj') ||
+        clickedImg.closest('.proj-body');
 
-    if (!scope) return [];
+      if (!scope) return [];
 
-    return Array.from(scope.querySelectorAll('img'))
-      .map(img => ({
-        src: img.getAttribute('src'),
-        alt: img.getAttribute('alt') || 'Image'
-      }))
-      .filter(i => i.src && !i.src.includes('.keep'));
-  }
+      return Array.from(scope.querySelectorAll('img'))
+        .map(img => ({
+          src: img.getAttribute('src'),
+          alt: img.getAttribute('alt') || 'Image'
+        }))
+        .filter(i => i.src && !i.src.includes('.keep'));
+    }
 
-  function openLightbox(list, index) {
-    currentList = list;
-    currentIndex = index;
+    function openLightbox(list, index) {
+      currentList = list;
+      currentIndex = index;
 
-    const item = currentList[currentIndex];
-    lbImg.src = item.src;
-    lbTitle.textContent = item.alt;
+      const item = currentList[currentIndex];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.alt;
 
-    lb.classList.add('open');
-    lb.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
 
-    const showNav = currentList.length > 1;
-    btnPrev.style.display = showNav ? '' : 'none';
-    btnNext.style.display = showNav ? '' : 'none';
-    arrowPrev.style.display = showNav ? '' : 'none';
-    arrowNext.style.display = showNav ? '' : 'none';
-  }
+      const showNav = currentList.length > 1;
+      btnPrev.style.display = showNav ? '' : 'none';
+      btnNext.style.display = showNav ? '' : 'none';
+      arrowPrev.style.display = showNav ? '' : 'none';
+      arrowNext.style.display = showNav ? '' : 'none';
+    }
 
-  function closeLightbox() {
-    lb.classList.remove('open');
-    lb.setAttribute('aria-hidden', 'true');
-    lbImg.src = '';
-    document.body.style.overflow = '';
-    currentList = [];
-    currentIndex = 0;
-  }
+    function closeLightbox() {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      lbImg.src = '';
+      document.body.style.overflow = '';
+      currentList = [];
+      currentIndex = 0;
+    }
 
-  function showIndex(nextIndex) {
-    if (!currentList.length) return;
-    currentIndex = (nextIndex + currentList.length) % currentList.length;
-    const item = currentList[currentIndex];
-    lbImg.src = item.src;
-    lbTitle.textContent = item.alt;
-  }
+    function showIndex(nextIndex) {
+      if (!currentList.length) return;
+      currentIndex = (nextIndex + currentList.length) % currentList.length;
+      const item = currentList[currentIndex];
+      lbImg.src = item.src;
+      lbTitle.textContent = item.alt;
+    }
 
-  function prev() { showIndex(currentIndex - 1); }
-  function next() { showIndex(currentIndex + 1); }
+    function prev() { showIndex(currentIndex - 1); }
+    function next() { showIndex(currentIndex + 1); }
 
-  // Click any image in Projects grid
-  document.addEventListener('click', (e) => {
-    const img = e.target.closest('img');
-    if (!img) return;
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      if (!img.closest('.grid')) return;
 
-    // only if image is inside the projects grid
-    if (!img.closest('.grid')) return;
+      const src = img.getAttribute('src');
+      if (!src || src.includes('.keep')) return;
 
-    const src = img.getAttribute('src');
-    if (!src || src.includes('.keep')) return;
+      const list = getProjectImageList(img);
+      const idx = Math.max(0, list.findIndex(i => i.src === src));
+      openLightbox(list, idx);
+    });
 
-    const list = getProjectImageList(img);
-    const idx = Math.max(0, list.findIndex(i => i.src === src));
-    openLightbox(list, idx);
-  });
+    btnClose.addEventListener('click', closeLightbox);
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    arrowPrev.addEventListener('click', prev);
+    arrowNext.addEventListener('click', next);
 
-  // Controls
-  btnClose.addEventListener('click', closeLightbox);
-  btnPrev.addEventListener('click', prev);
-  btnNext.addEventListener('click', next);
-  arrowPrev.addEventListener('click', prev);
-  arrowNext.addEventListener('click', next);
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) closeLightbox();
+    });
 
-  // Close on backdrop click
-  lb.addEventListener('click', (e) => {
-    if (e.target === lb) closeLightbox();
-  });
-
-  // Keyboard
-  document.addEventListener('keydown', (e) => {
-    if (!lb.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') prev();
-    if (e.key === 'ArrowRight') next();
-  });
-})();
-</script>
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+  })();
+  </script>
 </body>
 </html>
